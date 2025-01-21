@@ -1,0 +1,139 @@
+# default
+
+spring:
+  application:
+    name: eventhub-emulator-as-testcontainer
+  cloud:
+    azure:
+      eventhubs:
+        processor:
+          checkpoint-store:
+            create-container-if-not-exists: true
+            container-name: emulator-testcontainers
+        event-hub-name: ${azure.eventhub}
+        consumer:
+          consumer-group: ${azure.consumer-group}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "code-processor-client"
+azure:
+  eventhub: eh1
+  consumer-group: cg1
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "code-partition-consumer"
+azure:
+  eventhub: eh2
+  consumer-group: cg2
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "docker-processor-client"
+azure:
+  eventhub: eh3
+  consumer-group: cg3
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "docker-partition-consumer"
+azure:
+  eventhub: eh4
+  consumer-group: cg4
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "code-stream-binder"
+  cloud:
+    azure:
+      eventhubs:
+        processor:
+          checkpoint-store:
+            container-name: "test-binder"
+            create-container-if-not-exists: true
+            account-name: devstoreaccount1
+    stream:
+      bindings:
+        consume-in-0:
+          destination: ${azure.eventhub}
+          group: ${azure.consumer-group}
+          content-type: text/plain
+          consumer:
+            batch-mode: false
+      eventhubs:
+        bindings:
+          consume-in-0:
+            consumer:
+              batch:
+                max-wait-time: PT2S
+              checkpoint:
+                mode: MANUAL
+              initial-partition-event-position:
+                0:
+                  offset: earliest
+                1:
+                  offset: earliest
+    function:
+      definition: consume
+
+azure:
+  eventhub: eh5
+  consumer-group: cg5
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "docker-stream-binder"
+  cloud:
+    azure:
+      eventhubs:
+        processor:
+          checkpoint-store:
+            container-name: "test-binder"
+            create-container-if-not-exists: true
+            account-name: devstoreaccount1
+    stream:
+      bindings:
+        consume-in-0:
+          destination: ${azure.eventhub}
+          group: ${azure.consumer-group}
+          content-type: text/plain
+          consumer:
+            batch-mode: false
+      eventhubs:
+        bindings:
+          consume-in-0:
+            consumer:
+              batch:
+                max-wait-time: PT2S
+              checkpoint:
+                mode: MANUAL
+              initial-partition-event-position:
+                0:
+                  offset: earliest
+                1:
+                  offset: earliest
+    function:
+      definition: consume
+
+azure:
+  eventhub: eh6
+  consumer-group: cg6

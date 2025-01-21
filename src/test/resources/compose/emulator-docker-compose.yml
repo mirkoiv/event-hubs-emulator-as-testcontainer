@@ -1,0 +1,15 @@
+services:
+  emulator:
+    image: "mcr.microsoft.com/azure-messaging/eventhubs-emulator:latest"
+    volumes:
+      - "${CONFIG_FILE}:/Eventhubs_Emulator/ConfigFiles/Config.json"
+    environment:
+      BLOB_SERVER: azurite
+      METADATA_SERVER: azurite
+      ACCEPT_EULA: ${ACCEPT_EULA}
+    depends_on:
+      - azurite
+  azurite:
+    image: "mcr.microsoft.com/azure-storage/azurite:latest"
+    # use command if '--skipApiVersionCheck' is required
+    #command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --queueHost 0.0.0.0 --queuePort 10001 --tableHost 0.0.0.0 --tablePort 10002 --skipApiVersionCheck"
